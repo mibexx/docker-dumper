@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+. /usr/local/bin/inc/basics
+
+
+rm -rf useDATAPATH/*

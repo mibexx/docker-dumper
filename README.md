@@ -12,6 +12,7 @@ docker run --rm mibexx/docker-dump <command>
 | -------- | ----------- |
 | dump | Dump the $DATAPATH directory |
 | restore | Restore dump to $DATAPATH directory |
+| clear | (!) Remove all Data in $DATAPATH directory |
 
 
 ***Environments***  
