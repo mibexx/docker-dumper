@@ -4,7 +4,7 @@
 
 
 if [[ "$useENGINE" == "default" ]]; then
-    DUMPNAME=$(ls /dump/ | grep "$useVERSION" | sort | tail -n 1)
+    DUMPNAME=$(ls /dump/ | grep "\-$useVERSION" | sort | tail -n 1)
 fi
 
 if [[ "$useENGINE" == "ssh" ]]; then
@@ -19,7 +19,7 @@ if [[ "$useENGINE" == "ssh" ]]; then
 
     useSSHDEST=${SSHDEST}
     COMMAND="$useSSHUSER@$useSSHHOST"
-    filterDEST="$useSSHDEST*$useVERSION*tgz"
+    filterDEST="$useSSHDEST*-$useVERSION*tgz"
 
     if [[ -z "${SSHPASS}" ]]; then
         [[ -z "${SSHKEYFILE}" ]] && useSSHKEYFILE='/root/.ssh/id_rsa' || useSSHKEYFILE="${SSHKEYFILE}"
@@ -54,7 +54,7 @@ if [[ "$useENGINE" == "awss3" ]]; then
 
     if [[ -z "${DUMPNAME}" ]]; then
         # Get latest dump
-        DUMPNAME=$(aws s3 ls ${BUCKET}/$PROJECT/ | grep 'tgz' | grep $useVERSION | sort | tail -n 1 | awk '{ print $4 }')
+        DUMPNAME=$(aws s3 ls ${BUCKET}/$PROJECT/ | grep 'tgz' | grep "\-$useVERSION" | sort | tail -n 1 | awk '{ print $4 }')
         DUMPNAME=$(echo $DUMPNAME )
     else
         DUMPNAME="${DUMPNAME}"
