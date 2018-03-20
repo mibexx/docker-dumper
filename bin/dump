@@ -3,7 +3,7 @@
 . /usr/local/bin/inc/basics
 
 
-DUMPNAME="/dump/$usePROJECT-$RELEASE_DATE-$useVERSION.tgz"
+DUMPNAME="$usePROJECT-$RELEASE_DATE-$useVERSION.tgz"
 
 # Create tgz
 tar cfz $DUMPNAME $useDATAPATH
@@ -29,9 +29,9 @@ if [[ "$useENGINE" == "ssh" ]]; then
     if [[ -z "${SSHPASS}" ]]; then
         [[ -z "${SSHKEYFILE}" ]] && useSSHKEYFILE='/root/.ssh/id_rsa' || useSSHKEYFILE="${SSHKEYFILE}"
 
-        scp -P $useSSHPORT -i $useSSHKEYFILE -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r $DUMPNAME $COMMAND
+        scp -P $useSSHPORT -i $useSSHKEYFILE -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r /dump/$DUMPNAME $COMMAND
     else
-        sshpass -p '${SSHPASS}' scp -P $useSSHPORT -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r $DUMPNAME $COMMAND
+        sshpass -p '${SSHPASS}' scp -P $useSSHPORT -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r /dump/$DUMPNAME $COMMAND
     fi
 fi
 
