@@ -54,11 +54,13 @@ if [[ "$useENGINE" == "awss3" ]]; then
 
     if [[ -z "${DUMPNAME}" ]]; then
         # Get latest dump
-        DUMPNAME=$(aws s3 ls ${BUCKET}/$PROJECT/ | grep 'tgz' | grep '$useVERSION' | sort | tail -n 1 | awk '{print $4}')
+        DUMPNAME=$(aws s3 ls ${BUCKET}/$PROJECT/ | grep 'tgz' | grep $useVERSION | sort | tail -n 1 | awk '{ print $4 }')
+        DUMPNAME=$(echo $DUMPNAME )
     else
         DUMPNAME="${DUMPNAME}"
     fi
 
+    echo "Found dump: $DUMPNAME"
     aws s3 cp "${BUCKET}/$PROJECT/$DUMPNAME" /dump/$DUMPNAME
 fi
 
