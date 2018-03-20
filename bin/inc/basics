@@ -8,4 +8,3 @@
 # prepare
 mkdir -p /dump
 RELEASE_DATE=$(date +"%Y%m%d-%H%M%S")
-DUMPNAME="/dump/$usePROJECT-$RELEASE_DATE-$useVERSION.tgz"

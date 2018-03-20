@@ -3,9 +3,10 @@
 . /usr/local/bin/inc/basics
 
 
+DUMPNAME="/dump/$usePROJECT-$RELEASE_DATE-$useVERSION.tgz"
+
 # Create tgz
 tar cfz $DUMPNAME /data/*
-
 SUCCESS=0
 
 if [[ "$useENGINE" == "default" ]]; then

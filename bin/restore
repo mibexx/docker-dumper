@@ -4,7 +4,7 @@
 
 
 if [[ "$useENGINE" == "default" ]]; then
-    DUMPNAME=$(ls /dump/ | sort | tail -n 1)
+    DUMPNAME=$(ls /dump/*$useVersion* | sort | tail -n 1)
 fi
 
 if [[ "$useENGINE" == "ssh" ]]; then
@@ -19,29 +19,30 @@ if [[ "$useENGINE" == "ssh" ]]; then
 
     useSSHDEST=${SSHDEST}
     COMMAND="$useSSHUSER@$useSSHHOST"
+    filterDEST="$useSSHDEST*$useVERSION*tgz"
 
     if [[ -z "${SSHPASS}" ]]; then
         [[ -z "${SSHKEYFILE}" ]] && useSSHKEYFILE='/root/.ssh/id_rsa' || useSSHKEYFILE="${SSHKEYFILE}"
 
         if [[ -z "${DUMPNAME}" ]]; then
             # Get latest dump
-            DUMPNAME=$(ssh -p $useSSHPORT -i $useSSHKEYFILE -F /dev/null -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMAND 'ls ${SSHDEST} | sort | tail -n 1')
+            DUMPNAME=$(ssh -p $useSSHPORT -i $useSSHKEYFILE -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMAND 'ls $filterDEST | sort | tail -n 1')
         else
             DUMPNAME="${DUMPNAME}"
         fi
 
         COMMANDDEST="$COMMAND:$useSSHDEST$DUMPNAME"
-        scp -P $useSSHPORT -i $useSSHKEYFILE -F /dev/null -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMANDDEST /dump/$DUMPNAME
+        scp -P $useSSHPORT -i $useSSHKEYFILE -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMANDDEST /dump/$DUMPNAME
     else
         if [[ -z "${DUMPNAME}" ]]; then
             # Get latest dump
-            DUMPNAME=$(sshpass -p '${SSHPASS}' ssh -p $useSSHPORT -F /dev/null -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMAND 'ls ${SSHDEST} | sort | tail -n 1')
+            DUMPNAME=$(sshpass -p '${SSHPASS}' ssh -p $useSSHPORT -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMAND 'ls $filterDEST | sort | tail -n 1')
         else
             DUMPNAME="${DUMPNAME}"
         fi
 
         COMMANDDEST="$COMMAND:$useSSHDEST$DUMPNAME"
-        sshpass -p '${SSHPASS}' scp -P $useSSHPORT -F /dev/null -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMANDDEST /dump/$DUMPNAME
+        sshpass -p '${SSHPASS}' scp -P $useSSHPORT -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMANDDEST /dump/$DUMPNAME
     fi
 fi
 
