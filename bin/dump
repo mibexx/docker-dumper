@@ -6,7 +6,7 @@
 DUMPNAME="$usePROJECT-$RELEASE_DATE-$useVERSION.tgz"
 
 # Create tgz
-tar cfz $DUMPNAME $useDATAPATH
+tar cfz /dump/$DUMPNAME $useDATAPATH
 SUCCESS=0
 
 if [[ "$useENGINE" == "default" ]]; then
@@ -44,7 +44,7 @@ if [[ "$useENGINE" == "awss3" ]]; then
     fi
 
     echo "Dump to: ${BUCKET}/$PROJECT/$DUMPNAME"
-    aws s3 cp $DUMPNAME "${BUCKET}/$PROJECT/$DUMPNAME"
+    aws s3 cp /dump/$DUMPNAME "${BUCKET}/$PROJECT/$DUMPNAME"
 fi
 
 if [[ "$SUCCESS" == 1 ]]; then

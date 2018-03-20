@@ -3,4 +3,5 @@
 . /usr/local/bin/inc/basics
 
 
-rm -rf useDATAPATH/*
+echo "Clear $useDATAPATH"
+rm -rf $useDATAPATH/*
