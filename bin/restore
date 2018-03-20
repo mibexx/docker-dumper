@@ -10,21 +10,38 @@ fi
 if [[ "$useENGINE" == "ssh" ]]; then
     [[ -z "${SSHUSER}" ]] && useSSHUSER='root' || useSSHUSER="${SSHUSER}"
     [[ -z "${SSHPORT}" ]] && useSSHPORT='22' || useSSHPORT="${SSHPORT}"
-    [[ -z "${SSHHOST}" ]] && useSSHHOST='22' || useSSHHOST="${SSHHOST}"
+    [[ -z "${SSHHOST}" ]] && useSSHHOST='127.0.0.1' || useSSHHOST="${SSHHOST}"
 
     if [[ -z "${SSHDEST}" ]]; then
        echo "Environment variable SSHDEST not configured"
        exit -1
     fi
 
+    useSSHDEST=${SSHDEST}
+    COMMAND="$useSSHUSER@$useSSHHOST"
+
     if [[ -z "${SSHPASS}" ]]; then
         [[ -z "${SSHKEYFILE}" ]] && useSSHKEYFILE='/root/.ssh/id_rsa' || useSSHKEYFILE="${SSHKEYFILE}"
 
-        DUMPNAME=$(ssh -p $useSSHPORT -i $useSSHKEYFILE -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '$useSSHUSER@$useSSHHOST' 'bash -c \'ls ${SSHDEST} | sort | tail -n 1\' ")
-        scp -P $useSSHPORT -i $useSSHKEYFILE -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$useSSHUSER@$useSSHHOST:${SSHDEST}" /dump/$DUMPNAME
+        if [[ -z "${DUMPNAME}" ]]; then
+            # Get latest dump
+            DUMPNAME=$(ssh -p $useSSHPORT -i $useSSHKEYFILE -F /dev/null -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMAND 'ls ${SSHDEST} | sort | tail -n 1')
+        else
+            DUMPNAME="${DUMPNAME}"
+        fi
+
+        COMMANDDEST="$COMMAND:$useSSHDEST$DUMPNAME"
+        scp -P $useSSHPORT -i $useSSHKEYFILE -F /dev/null -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMANDDEST /dump/$DUMPNAME
     else
-        DUMPNAME=$(sshpass -p '${SSHPASS}' ssh -p $useSSHPORT -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '$useSSHUSER@$useSSHHOST' 'bash -c \'ls ${SSHDEST} | sort | tail -n 1\' ")
-        sshpass -p '${SSHPASS}' scp -P $useSSHPORT -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$useSSHUSER@$useSSHHOST:${SSHDEST}" /dump/$DUMPNAME
+        if [[ -z "${DUMPNAME}" ]]; then
+            # Get latest dump
+            DUMPNAME=$(sshpass -p '${SSHPASS}' ssh -p $useSSHPORT -F /dev/null -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMAND 'ls ${SSHDEST} | sort | tail -n 1')
+        else
+            DUMPNAME="${DUMPNAME}"
+        fi
+
+        COMMANDDEST="$COMMAND:$useSSHDEST$DUMPNAME"
+        sshpass -p '${SSHPASS}' scp -P $useSSHPORT -F /dev/null -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMANDDEST /dump/$DUMPNAME
     fi
 fi
 
@@ -46,4 +63,4 @@ fi
 
 # Extract tgz
 echo "Extract dump: $DUMPNAME"
-tar xfz "/dump/$DUMPNAME" /data/
+tar xfz "/dump/$DUMPNAME" -C /
