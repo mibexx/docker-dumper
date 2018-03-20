@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ ! -f ~/.aws/credentials ]; then
-    if [[ -z "${$AWS_ACCESS_KEY_ID}" ]]; then
+    if [[ -z "${AWS_ACCESS_KEY_ID}" ]]; then
         ACCESS_ID=${AWS_ACCESS_KEY_ID}
         ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     else
