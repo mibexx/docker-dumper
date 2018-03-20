@@ -4,6 +4,7 @@
 [[ -z "${ENGINE}" ]] && useENGINE='default' || useENGINE="${ENGINE}"
 [[ -z "${PROJECT}" ]] && usePROJECT='project' || usePROJECT="${PROJECT}"
 [[ -z "${VERSION}" ]] && useVERSION='master' || useVERSION="${VERSION}"
+[[ -z "${DATAPATH}" ]] && useDATAPATH='/data' || useDATAPATH="${DATAPATH}"
 
 # prepare
 mkdir -p /dump

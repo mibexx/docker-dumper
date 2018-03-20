@@ -10,8 +10,8 @@ docker run --rm mibexx/docker-dump <command>
 
 | Command | Description |
 | -------- | ----------- |
-| dump | Dump the /data directory |
-| restore | Restore dump to /data directory |
+| dump | Dump the $DATAPATH directory |
+| restore | Restore dump to $DATAPATH directory |
 
 
 ***Environments***  
@@ -21,6 +21,7 @@ docker run --rm mibexx/docker-dump <command>
 | ENGINE | Possible engine values: default, ssh, awss3 | default |
 | PROJECT | Name of the Project | project |
 | VERSION | Version of the Project | master |
+| DATAPATH | Path to the data | /data |
 
 
 Engine "ssh"

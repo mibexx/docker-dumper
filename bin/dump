@@ -6,7 +6,7 @@
 DUMPNAME="/dump/$usePROJECT-$RELEASE_DATE-$useVERSION.tgz"
 
 # Create tgz
-tar cfz $DUMPNAME /data/*
+tar cfz $DUMPNAME $useDATAPATH
 SUCCESS=0
 
 if [[ "$useENGINE" == "default" ]]; then
