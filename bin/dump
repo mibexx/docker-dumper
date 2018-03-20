@@ -33,6 +33,8 @@ if [[ "$useENGINE" == "ssh" ]]; then
     else
         sshpass -p '${SSHPASS}' scp -P $useSSHPORT -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r /dump/$DUMPNAME $COMMAND
     fi
+
+    echo "Dump to: $COMMAND"
 fi
 
 if [[ "$useENGINE" == "awss3" ]]; then
@@ -41,6 +43,7 @@ if [[ "$useENGINE" == "awss3" ]]; then
        exit -1
     fi
 
+    echo "Dump to: ${BUCKET}/$PROJECT/$DUMPNAME"
     aws s3 cp $DUMPNAME "${BUCKET}/$PROJECT/$DUMPNAME"
 fi
 
