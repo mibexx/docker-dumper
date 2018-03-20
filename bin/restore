@@ -4,7 +4,7 @@
 
 
 if [[ "$useENGINE" == "default" ]]; then
-    DUMPNAME=$(ls /dump/*$useVersion* | sort | tail -n 1)
+    DUMPNAME=$(ls /dump/ | grep "$useVERSION" | sort | tail -n 1)
 fi
 
 if [[ "$useENGINE" == "ssh" ]]; then
