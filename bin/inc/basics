@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# ENVs
+[[ -z "${ENGINE}" ]] && useENGINE='default' || useENGINE="${ENGINE}"
+[[ -z "${PROJECT}" ]] && usePROJECT='project' || usePROJECT="${PROJECT}"
+[[ -z "${VERSION}" ]] && useVERSION='master' || useVERSION="${VERSION}"
+
+# prepare
+mkdir -p /dump
+RELEASE_DATE=$(date +"%Y%m%d-%H%M%S")
+DUMPNAME="/dump/$usePROJECT-$RELEASE_DATE-$useVERSION.tgz"

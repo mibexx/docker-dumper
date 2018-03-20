@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+echo "Docker dumper"
+echo "=================="
+
+echo "Commands:"
+echo "help - show this list"
+echo "dump - dump the directory /data to the configured engine"
+echo "restore - restore dump from configured engine to the directory /data"

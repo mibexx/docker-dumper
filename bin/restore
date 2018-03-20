@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+. /usr/local/bin/inc/basics
+
+
+if [[ "$useENGINE" == "default" ]]; then
+    DUMPNAME=$(ls /dump/ | sort | tail -n 1)
+fi
+
+if [[ "$useENGINE" == "ssh" ]]; then
+    [[ -z "${SSHUSER}" ]] && useSSHUSER='root' || useSSHUSER="${SSHUSER}"
+    [[ -z "${SSHPORT}" ]] && useSSHPORT='22' || useSSHPORT="${SSHPORT}"
+    [[ -z "${SSHHOST}" ]] && useSSHHOST='22' || useSSHHOST="${SSHHOST}"
+
+    if [[ -z "${SSHDEST}" ]]; then
+       echo "Environment variable SSHDEST not configured"
+       exit -1
+    fi
+
+    if [[ -z "${SSHPASS}" ]]; then
+        [[ -z "${SSHKEYFILE}" ]] && useSSHKEYFILE='/root/.ssh/id_rsa' || useSSHKEYFILE="${SSHKEYFILE}"
+
+        DUMPNAME=$(ssh -p $useSSHPORT -i $useSSHKEYFILE -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '$useSSHUSER@$useSSHHOST' 'bash -c \'ls ${SSHDEST} | sort | tail -n 1\' ")
+        scp -P $useSSHPORT -i $useSSHKEYFILE -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$useSSHUSER@$useSSHHOST:${SSHDEST}" /dump/$DUMPNAME
+    else
+        DUMPNAME=$(sshpass -p '${SSHPASS}' ssh -p $useSSHPORT -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no '$useSSHUSER@$useSSHHOST' 'bash -c \'ls ${SSHDEST} | sort | tail -n 1\' ")
+        sshpass -p '${SSHPASS}' scp -P $useSSHPORT -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$useSSHUSER@$useSSHHOST:${SSHDEST}" /dump/$DUMPNAME
+    fi
+fi
+
+if [[ "$useENGINE" == "awss3" ]]; then
+    if [[ -z "${BUCKET}" ]]; then
+       echo "Environment variable BUCKET not configured"
+       exit -1
+    fi
+
+    if [[ -z "${DUMPNAME}" ]]; then
+        # Get latest dump
+        DUMPNAME=$("aws s3 ls ${BUCKET}/$PROJECT/ | sort | tail -n 1 | awk '{print $4}'")
+    else
+        DUMPNAME="${DUMPNAME}"
+    fi
+
+    aws s3 cp "${BUCKET}/$PROJECT/$DUMPNAME" /dump/$DUMPNAME
+fi
+
+# Extract tgz
+echo "Extract dump: $DUMPNAME"
+tar xfz "/dump/$DUMPNAME" /data/

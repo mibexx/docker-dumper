@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+. /usr/local/bin/inc/basics
+
+
+# Create tgz
+tar cfz $DUMPNAME /data/*
+
+SUCCESS=0
+
+if [[ "$useENGINE" == "default" ]]; then
+    SUCCESS=1
+fi
+
+if [[ "$useENGINE" == "ssh" ]]; then
+    [[ -z "${SSHUSER}" ]] && useSSHUSER='root' || useSSHUSER="${SSHUSER}"
+    [[ -z "${SSHPORT}" ]] && useSSHPORT='22' || useSSHPORT="${SSHPORT}"
+    [[ -z "${SSHHOST}" ]] && useSSHHOST='127.0.0.1' || useSSHHOST="${SSHHOST}"
+
+    if [[ -z "${SSHDEST}" ]]; then
+       echo "Environment variable SSHDEST not configured"
+       exit -1
+    fi
+    useSSHDEST=${SSHDEST}
+
+    COMMAND="$useSSHUSER@$useSSHHOST:$useSSHDEST"
+
+    if [[ -z "${SSHPASS}" ]]; then
+        [[ -z "${SSHKEYFILE}" ]] && useSSHKEYFILE='/root/.ssh/id_rsa' || useSSHKEYFILE="${SSHKEYFILE}"
+
+        scp -P $useSSHPORT -i $useSSHKEYFILE -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r $DUMPNAME $COMMAND
+    else
+        sshpass -p '${SSHPASS}' scp -P $useSSHPORT -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r $DUMPNAME $COMMAND
+    fi
+fi
+
+if [[ "$useENGINE" == "awss3" ]]; then
+    if [[ -z "${BUCKET}" ]]; then
+       echo "Environment variable BUCKET not configured"
+       exit -1
+    fi
+
+    aws s3 cp $DUMPNAME "${BUCKET}/$PROJECT/$DUMPNAME"
+fi
+
+if [[ "$SUCCESS" == 1 ]]; then
+    echo "Dump saved: $DUMPNAME"
+fi
