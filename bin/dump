@@ -19,10 +19,10 @@ if [[ "$useENGINE" == "ssh" ]]; then
     [[ -z "${SSHHOST}" ]] && useSSHHOST='127.0.0.1' || useSSHHOST="${SSHHOST}"
 
     if [[ -z "${SSHDEST}" ]]; then
-       echo "Environment variable SSHDEST not configured"
-       exit -1
+       useSSHDEST="/"
+    else
+        useSSHDEST=${SSHDEST}
     fi
-    useSSHDEST=${SSHDEST}
 
     COMMAND="$useSSHUSER@$useSSHHOST:$useSSHDEST"
 
