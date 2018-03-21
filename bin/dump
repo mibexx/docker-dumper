@@ -29,9 +29,9 @@ if [[ "$useENGINE" == "ssh" ]]; then
     if [[ -z "${SSHPASS}" ]]; then
         [[ -z "${SSHKEYFILE}" ]] && useSSHKEYFILE='/root/.ssh/id_rsa' || useSSHKEYFILE="${SSHKEYFILE}"
 
-        rsync -e "ssh -p $useSSHPORT -i $useSSHKEYFILE -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -av /dump/ $COMMAND
+        rsync -e "ssh -p $useSSHPORT -i $useSSHKEYFILE -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" --progress -av /dump/ $COMMAND
     else
-        sshpass -p ${SSHPASS} rsync -e "ssh -p $useSSHPORT -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -av /dump/ $COMMAND
+        sshpass -p ${SSHPASS} rsync -e "ssh -p $useSSHPORT -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" --progress -av /dump/ $COMMAND
     fi
 
     echo "Dump to: $COMMAND"
