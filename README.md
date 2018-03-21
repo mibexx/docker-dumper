@@ -40,7 +40,7 @@ docker run --rm -v ~/data:/data -e ENGINE=ssh mibexx/docker-dump <command>
 | SSHHOST | SSH Host | 127.0.0.1 |
 | SSHKEYFILE | Path to the ssh-keyfile | /root/.ssh/id_rsa |
 | SSHPASS | SSH Password |  |
-| SSHDEST | Root Path on Server | / |
+| SSHDEST | Root Path on Server | ~/ |
 | DUMPNAME | Name of the dump-file for restoring | the latest file |
 
 If no pass is given it will try to use the key file.

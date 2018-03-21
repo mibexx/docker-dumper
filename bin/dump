@@ -19,7 +19,7 @@ if [[ "$useENGINE" == "ssh" ]]; then
     [[ -z "${SSHHOST}" ]] && useSSHHOST='127.0.0.1' || useSSHHOST="${SSHHOST}"
 
     if [[ -z "${SSHDEST}" ]]; then
-       useSSHDEST="/"
+       useSSHDEST="~/"
     else
         useSSHDEST=${SSHDEST}
     fi
