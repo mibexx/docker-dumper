@@ -20,29 +20,31 @@ if [[ "$useENGINE" == "ssh" ]]; then
 
 
     COMMAND="$useSSHUSER@$useSSHHOST"
-    filterDEST="$PROJECT/$useSSHDEST*-$useVERSION*tgz"
+    filterDEST="*-$useVERSION*tgz"
 
     if [[ -z "${SSHPASS}" ]]; then
         [[ -z "${SSHKEYFILE}" ]] && useSSHKEYFILE='/root/.ssh/id_rsa' || useSSHKEYFILE="${SSHKEYFILE}"
 
         if [[ -z "${DUMPNAME}" ]]; then
             # Get latest dump
-            DUMPNAME=$(ssh -p $useSSHPORT -i $useSSHKEYFILE -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMAND 'ls $filterDEST | sort | tail -n 1')
+            DUMPNAME=$(ssh -p $useSSHPORT -i $useSSHKEYFILE -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMAND find $useSSHDEST$PROJECT/ -type f -name $filterDEST -exec 'basename {} \;' | sort | tail -n 1)
         else
             DUMPNAME="${DUMPNAME}"
         fi
 
-        COMMANDDEST="$COMMAND:$useSSHDEST$PROJECT$DUMPNAME"
+        echo "Dump found: $DUMPNAME"
+        COMMANDDEST="$COMMAND:$useSSHDEST$PROJECT/$DUMPNAME"
         scp -P $useSSHPORT -i $useSSHKEYFILE -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMANDDEST /dump/$DUMPNAME
     else
         if [[ -z "${DUMPNAME}" ]]; then
             # Get latest dump
-            DUMPNAME=$(sshpass -p '${SSHPASS}' ssh -p $useSSHPORT -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMAND 'ls $filterDEST | sort | tail -n 1')
+            DUMPNAME=$(sshpass -p '${SSHPASS}' ssh -p $useSSHPORT -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMAND find $useSSHDEST$PROJECT/ -type f -name $filterDEST -exec 'basename {} \;' | sort | tail -n 1)
         else
             DUMPNAME="${DUMPNAME}"
         fi
 
-        COMMANDDEST="$COMMAND:$useSSHDEST$PROJECT$DUMPNAME"
+        echo "Dump found: $DUMPNAME"
+        COMMANDDEST="$COMMAND:$useSSHDEST$PROJECT/$DUMPNAME"
         sshpass -p '${SSHPASS}' scp -P $useSSHPORT -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMANDDEST /dump/$DUMPNAME
     fi
 fi
