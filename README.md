@@ -3,7 +3,7 @@ Docker volume dumper
 
 ***Usage***  
 ```
-docker run --rm mibexx/docker-dump <command>
+docker run --rm mibexx/docker-dumper <command>
 ```
 
 ***Commands***
@@ -28,7 +28,7 @@ docker run --rm mibexx/docker-dump <command>
 Engine "ssh"
 ------------
 ```
-docker run --rm -v ~/data:/data -e ENGINE=ssh mibexx/docker-dump <command>
+docker run --rm -v ~/data:/data -e ENGINE=ssh mibexx/docker-dumper <command>
 ```
 
 ***Environments***
@@ -43,13 +43,13 @@ docker run --rm -v ~/data:/data -e ENGINE=ssh mibexx/docker-dump <command>
 | SSHDEST | Root Path on Server | ~/ |
 | DUMPNAME | Name of the dump-file for restoring | the latest file |
 
-If no pass is given it will try to use the key file.
+If no pass is given it will try to use the key file. It's usefull to inject your key-file via volume into the container.
 
 
 Engine "awss3"
 ------------
 ```
-docker run --rm -v ~/data:/data -e ENGINE=ssh mibexx/docker-dump <command>
+docker run --rm -v ~/data:/data -e AWS_ACCESS_KEY_ID=123 -e AWS_SECRET_ACCESS_KEY=abc -e BUCKET=s3://mybucket -e ENGINE=awss3 mibexx/docker-dumper <command>
 ```
 
 ***Environments***
@@ -61,4 +61,4 @@ docker run --rm -v ~/data:/data -e ENGINE=ssh mibexx/docker-dump <command>
 | BUCKET | The s3 bucket url like s3://bucketname |  |
 | DUMPNAME | Name of the dump-file for restoring | the latest file |
 
-If no pass is given it will try to use the key file.
+Also it is possible to inject your local .aws/credentials as a volume to /root/.aws/credentials.
