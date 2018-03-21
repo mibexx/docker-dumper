@@ -11,6 +11,7 @@ RUN apk update \
     python3 \
     sshpass \
     openssh-client \
+    rsync \
  && python3 -m ensurepip \
  && pip3 install awscli
 

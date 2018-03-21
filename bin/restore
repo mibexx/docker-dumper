@@ -20,7 +20,7 @@ if [[ "$useENGINE" == "ssh" ]]; then
 
 
     COMMAND="$useSSHUSER@$useSSHHOST"
-    filterDEST="$useSSHDEST*-$useVERSION*tgz"
+    filterDEST="$PROJECT/$useSSHDEST*-$useVERSION*tgz"
 
     if [[ -z "${SSHPASS}" ]]; then
         [[ -z "${SSHKEYFILE}" ]] && useSSHKEYFILE='/root/.ssh/id_rsa' || useSSHKEYFILE="${SSHKEYFILE}"
@@ -32,7 +32,7 @@ if [[ "$useENGINE" == "ssh" ]]; then
             DUMPNAME="${DUMPNAME}"
         fi
 
-        COMMANDDEST="$COMMAND:$useSSHDEST$DUMPNAME"
+        COMMANDDEST="$COMMAND:$useSSHDEST$PROJECT$DUMPNAME"
         scp -P $useSSHPORT -i $useSSHKEYFILE -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMANDDEST /dump/$DUMPNAME
     else
         if [[ -z "${DUMPNAME}" ]]; then
@@ -42,7 +42,7 @@ if [[ "$useENGINE" == "ssh" ]]; then
             DUMPNAME="${DUMPNAME}"
         fi
 
-        COMMANDDEST="$COMMAND:$useSSHDEST$DUMPNAME"
+        COMMANDDEST="$COMMAND:$useSSHDEST$PROJECT$DUMPNAME"
         sshpass -p '${SSHPASS}' scp -P $useSSHPORT -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $COMMANDDEST /dump/$DUMPNAME
     fi
 fi

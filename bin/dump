@@ -19,19 +19,19 @@ if [[ "$useENGINE" == "ssh" ]]; then
     [[ -z "${SSHHOST}" ]] && useSSHHOST='127.0.0.1' || useSSHHOST="${SSHHOST}"
 
     if [[ -z "${SSHDEST}" ]]; then
-       useSSHDEST="~/"
+        useSSHDEST="~/"
     else
         useSSHDEST=${SSHDEST}
     fi
 
-    COMMAND="$useSSHUSER@$useSSHHOST:$useSSHDEST"
+    COMMAND="$useSSHUSER@$useSSHHOST:$useSSHDEST$PROJECT/"
 
     if [[ -z "${SSHPASS}" ]]; then
         [[ -z "${SSHKEYFILE}" ]] && useSSHKEYFILE='/root/.ssh/id_rsa' || useSSHKEYFILE="${SSHKEYFILE}"
 
-        scp -P $useSSHPORT -i $useSSHKEYFILE -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r /dump/$DUMPNAME $COMMAND
+        rsync -e "ssh -p $useSSHPORT -i $useSSHKEYFILE -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -av /dump/ $COMMAND
     else
-        sshpass -p '${SSHPASS}' scp -P $useSSHPORT -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r /dump/$DUMPNAME $COMMAND
+        sshpass -p ${SSHPASS} rsync -e "ssh -p $useSSHPORT -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" -av /dump/ $COMMAND
     fi
 
     echo "Dump to: $COMMAND"
